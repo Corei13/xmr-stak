@@ -136,7 +136,7 @@ int httpd::req_handler(void * cls,
 	}
 	else if(strcasecmp(url, "/health") == 0)
 	{
-		string health;
+		std::string health;
 		executor::inst()->get_http_report(EV_HTML_HEALTH, health);
 		executor::inst()->get_http_report(EV_HTML_HASHRATE, str);
 		rsp = MHD_create_response_from_buffer(str.size(), (void*)str.c_str(), MHD_RESPMEM_MUST_COPY);

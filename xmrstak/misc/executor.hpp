@@ -106,6 +106,7 @@ private:
 	void http_result_report(std::string& out);
 	void http_connection_report(std::string& out);
 	void http_json_report(std::string& out);
+  void http_health(std::string& out);
 
 	void http_report(ex_event_name ev);
 	void print_report(ex_event_name ev);
@@ -196,4 +197,3 @@ private:
 
 	inline size_t sec_to_ticks(size_t sec) { return sec * (1000 / iTickTime); }
 };
-
