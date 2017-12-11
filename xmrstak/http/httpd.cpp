@@ -134,6 +134,19 @@ int httpd::req_handler(void * cls,
 		rsp = MHD_create_response_from_buffer(str.size(), (void*)str.c_str(), MHD_RESPMEM_MUST_COPY);
 		MHD_add_response_header(rsp, "Content-Type", "text/html; charset=utf-8");
 	}
+	else if(strcasecmp(url, "/health") == 0)
+	{
+		string health;
+		executor::inst()->get_http_report(EV_HTML_HEALTH, health);
+		executor::inst()->get_http_report(EV_HTML_HASHRATE, str);
+		rsp = MHD_create_response_from_buffer(str.size(), (void*)str.c_str(), MHD_RESPMEM_MUST_COPY);
+		MHD_add_response_header(rsp, "Content-Type", "text/html; charset=utf-8");
+
+		int ret = MHD_queue_response(
+			connection, health == "ok" ? MHD_HTTP_OK : MHD_HTTP_SERVICE_UNAVAILABLE, rsp);
+		MHD_destroy_response(rsp);
+		return ret;
+	}
 	else
 	{
 		//Do a 302 redirect to /h
@@ -174,4 +187,3 @@ bool httpd::start_daemon()
 }
 
 #endif
-

@@ -51,8 +51,8 @@ using namespace rapidjson;
  * This enum needs to match index in oConfigValues, otherwise we will get a runtime error
  */
 enum configEnum {
-	aPoolList, bTlsSecureAlgo, sCurrency, iCallTimeout, iNetRetry, iGiveUpLimit, iVerboseLevel, bPrintMotd, iAutohashTime, 
-	bFlushStdout, bDaemonMode, sOutputFile, iHttpdPort, sHttpLogin, sHttpPass, bPreferIpv4, bAesOverride, sUseSlowMem 
+	aPoolList, bTlsSecureAlgo, sCurrency, iCallTimeout, iNetRetry, iGiveUpLimit, iVerboseLevel, bPrintMotd, iAutohashTime,
+	bFlushStdout, bDaemonMode, sOutputFile, iHttpdPort, sHttpLogin, sHttpPass, bPreferIpv4, bAesOverride, sUseSlowMem, iAcceptableHps
 };
 
 struct configVal {
@@ -81,7 +81,8 @@ configVal oConfigValues[] = {
 	{ sHttpPass, "http_pass", kStringType },
 	{ bPreferIpv4, "prefer_ipv4", kTrueType },
 	{ bAesOverride, "aes_override", kNullType },
-	{ sUseSlowMem, "use_slow_memory", kStringType }
+	{ sUseSlowMem, "use_slow_memory", kStringType },
+	{ iAcceptableHps, "acceptable_hps", kNumberType }
 };
 
 constexpr size_t iConfigCnt = (sizeof(oConfigValues)/sizeof(oConfigValues[0]));
@@ -255,6 +256,11 @@ const char* jconf::GetHttpPassword()
 	return prv->configValues[sHttpPass]->GetString();
 }
 
+uint64_t jconf::GetAcceptableHps()
+{
+	return prv->configValues[iAcceptableHps]->GetUint64();
+}
+
 bool jconf::DaemonMode()
 {
 	return prv->configValues[bDaemonMode]->GetBool();
@@ -424,7 +430,7 @@ bool jconf::parse_config(const char* sFilename)
 	for(uint32_t i=0; i < pool_cnt; i++)
 	{
 		const Value& oThdConf = prv->configValues[aPoolList]->GetArray()[i];
-		
+
 		if(!oThdConf.IsObject())
 		{
 			printer::inst()->print_msg(L0, "Invalid config file. pool_list must contain objects.");

@@ -63,6 +63,7 @@ public:
 	uint16_t GetHttpdPort();
 	const char* GetHttpUsername();
 	const char* GetHttpPassword();
+	uint64_t GetAcceptableHps();
 
 	bool DaemonMode();
 
