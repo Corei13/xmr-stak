@@ -638,6 +638,7 @@ void executor::ex_main()
 		case EV_HTML_RESULTS:
 		case EV_HTML_CONNSTAT:
 		case EV_HTML_JSON:
+		case EV_HTML_HEALTH:
 			http_report(ev.iName);
 			break;
 
@@ -1132,10 +1133,15 @@ void executor::http_health(std::string& out)
 	size_t nthd = pvThreads->size();
 
 	for(size_t i=0; i < nthd; i++)
-		fTotal += telem->calc_telemetry_data(5 * 60000, i);
+	{
+		double fHps = telem->calc_telemetry_data(5 * 60000, i);
+		fTotal += fHps;
+		printer::inst()->print_msg(L3, "(%d) %lf %lf", i, fHps, fTotal);
+	}
 
 	double threshold = jconf::inst()->GetAcceptableHps();
-	if (fTotal >= threshold)
+	printer::inst()->print_msg(L3, "threshold=%lf", threshold);
+	if (std::isnan(fTotal) || fTotal >= threshold)
 		out = "ok";
 	else
 		out = "slow";
